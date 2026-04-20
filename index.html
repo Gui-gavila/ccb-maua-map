@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Igrejas CCB - Mauá SP</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Mapa */
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            z-index: 1;
+        }
+
+        /* Lista de Cards */
+        .church-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .church-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .church-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .church-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .church-card p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .church-card .days {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .day-tag {
+            font-size: 0.75rem;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            #map { height: 300px; }
+            body { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Igrejas CCB - Mauá SP</h1>
+        <p>Selecione os dias para filtrar as igrejas com culto</p>
+    </header>
+
+    <div class="filters" id="dayFilters">
+        <button class="filter-btn" data-day="Segunda">Segunda</button>
+        <button class="filter-btn" data-day="Terça">Terça</button>
+        <button class="filter-btn" data-day="Quarta">Quarta</button>
+        <button class="filter-btn" data-day="Quinta">Quinta</button>
+        <button class="filter-btn" data-day="Sexta">Sexta</button>
+        <button class="filter-btn" data-day="Sábado">Sábado</button>
+        <button class="filter-btn" data-day="Domingo">Domingo</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="church-list" id="churchList">
+        <!-- Cards serão inseridos aqui -->
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet MarkerCluster JS -->
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<script>
+    // Dados Mockados (Baseados no CSV solicitado)
+    const igrejasData = [
+        { bairro: "Jardim Zaíra", endereco: "Av. Pres. Castelo Branco, 2500", dias: ["Segunda", "Quarta", "Sexta"], lat: -23.6550, lng: -46.4350 },
+        { bairro: "Vila Assis Brasil", endereco: "Rua Assis Brasil, 450", dias: ["Terça", "Quinta", "Sábado"], lat: -23.6720, lng: -46.4550 },
+        { bairro: "Parque das Américas", endereco: "Rua Estados Unidos, 120", dias: ["Segunda", "Quinta", "Domingo"], lat: -23.6850, lng: -46.4420 },
+        { bairro: "Jardim Itapark", endereco: "Rua Itapark, 3200", dias: ["Quarta", "Sábado", "Domingo"], lat: -23.6680, lng: -46.4280 },
+        { bairro: "Sertãozinho", endereco: "Rua Brás Cubas, 800", dias: ["Terça", "Sexta"], lat: -23.6420, lng: -46.4150 },
+        { bairro: "Jardim Guapituba", endereco: "Rua Guapituba, 150", dias: ["Segunda", "Quarta", "Sábado"], lat: -23.6880, lng: -46.4650 },
+        { bairro: "Vila Noêmia", endereco: "Rua Almirante Tamandaré, 300", dias: ["Terça", "Quinta", "Sexta", "Domingo"], lat: -23.6650, lng: -46.4500 },
+        { bairro: "Jardim Mauá", endereco: "Rua das Camélias, 100", dias: ["Quarta", "Sexta", "Domingo"], lat: -23.6600, lng: -46.4400 }
+    ];
+
+    let map;
+    let markerCluster;
+    let selectedDays = [];
+
+    // Inicializar Mapa
+    function initMap() {
+        map = L.map('map').setView([-23.6687, -46.4614], 13); // Centralizado em Mauá
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        markerCluster = L.markerClusterGroup();
+        map.addLayer(markerCluster);
+        
+        renderContent();
+    }
+
+    // Renderizar Marcadores e Lista
+    function renderContent() {
+        // Limpar
+        markerCluster.clearLayers();
+        const listContainer = document.getElementById('churchList');
+        listContainer.innerHTML = '';
+
+        // Filtrar
+        const filtered = igrejasData.filter(igreja => {
+            if (selectedDays.length === 0) return true;
+            return selectedDays.some(day => igreja.dias.includes(day));
+        });
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = '<div class="empty-state">Nenhuma igreja encontrada para o filtro selecionado.</div>';
+            return;
+        }
+
+        filtered.forEach(igreja => {
+            // Adicionar Marcador
+            const marker = L.marker([igreja.lat, igreja.lng])
+                .bindPopup(`<b>${igreja.bairro}</b><br>${igreja.endereco || 'Endereço não disponível'}`);
+            markerCluster.addLayer(marker);
+
+            // Adicionar Card na Lista
+            const card = document.createElement('div');
+            card.className = 'church-card';
+            card.innerHTML = `
+                <h3>${igreja.bairro}</h3>
+                <p>${igreja.endereco || 'Endereço não disponível'}</p>
+                <div class="days">
+                    ${igreja.dias.map(d => `<span class="day-tag">${d}</span>`).join('')}
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    // Event Listeners para Filtros
+    document.getElementById('dayFilters').addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+            const day = e.target.getAttribute('data-day');
+            
+            if (selectedDays.includes(day)) {
+                selectedDays = selectedDays.filter(d => d !== day);
+                e.target.classList.remove('active');
+            } else {
+                selectedDays.push(day);
+                e.target.classList.add('active');
+            }
+            
+            renderContent();
+        }
+    });
+
+    // Iniciar
+    window.onload = initMap;
+</script>
+
+</body>
+</html>
