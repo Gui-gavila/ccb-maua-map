@@ -89,6 +89,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             z-index: 1;
+            background: #e5e7eb;
         }
 
         /* Lista de Cards */
@@ -171,7 +172,7 @@
 <div class="container">
     <header>
         <h1>Igrejas CCB - Mauá SP</h1>
-        <p>Mapa interativo com dias de culto atualizados</p>
+        <p>Mapa interativo restrito à cidade de Mauá</p>
     </header>
 
     <div class="filters" id="dayFilters">
@@ -181,6 +182,7 @@
         <button class="filter-btn" data-day="Quinta">Quinta</button>
         <button class="filter-btn" data-day="Sexta">Sexta</button>
         <button class="filter-btn" data-day="Sábado">Sábado</button>
+        <button class="filter-btn" data-day="Domingo">Domingo</button>
     </div>
 
     <div id="map"></div>
@@ -196,257 +198,70 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
 <script>
-    // Dados Reais Geocodificados
-    const igrejasData = [
-  {
-    "bairro": "Alto do Macuco",
-    "endereco": "Avenida Adilson Dias de Souza, 890",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6477421,
-    "lng": -46.4387084
-  },
-  {
-    "bairro": "Capuava",
-    "endereco": "Rua George Willian Hauck, 257",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.6524852,
-    "lng": -46.491003
-  },
-  {
-    "bairro": "Centro - Central",
-    "endereco": "Rua Japão, 233",
-    "dias": ["Terça", "Quinta", "Sábado"],
-    "lat": -23.6679376,
-    "lng": -46.4592467
-  },
-  {
-    "bairro": "Chácara Maria Francisca",
-    "endereco": "Estrada do Regalado, 592",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6536973,
-    "lng": -46.4131514
-  },
-  {
-    "bairro": "Estrada Sapopemba - Km 11",
-    "endereco": "Estrada do Carneiro, 4453",
-    "dias": ["Sexta"],
-    "lat": -23.6536095,
-    "lng": -46.4074683
-  },
-  {
-    "bairro": "Jardim Alto da Boa Vista",
-    "endereco": "Rua Henrique Martins, 22",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.6506449,
-    "lng": -46.4475184
-  },
-  {
-    "bairro": "Jardim Aracy",
-    "endereco": "Rua Barão de Bocaina, 45",
-    "dias": ["Terça", "Sábado"],
-    "lat": -23.6804647,
-    "lng": -46.4366546
-  },
-  {
-    "bairro": "Jardim Bom Recanto",
-    "endereco": "Rua São João, 502",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6756973,
-    "lng": -46.4277139
-  },
-  {
-    "bairro": "Jardim Brasília",
-    "endereco": "Rua Compositor Valdir Azevedo, 16",
-    "dias": ["Segunda", "Sexta"],
-    "lat": -23.6830799,
-    "lng": -46.4444911
-  },
-  {
-    "bairro": "Jardim Colúmbia",
-    "endereco": "Rua Leonaldo Calheiros de Melo, 269",
-    "dias": ["Quinta", "Sábado"],
-    "lat": -23.6521056,
-    "lng": -46.423857
-  },
-  {
-    "bairro": "Jardim Cruzeiro",
-    "endereco": "Rua Mário Quintana, 44",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6565715,
-    "lng": -46.4314868
-  },
-  {
-    "bairro": "Jardim Esperança",
-    "endereco": "Rua Luiz Benedetti, 68",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6830063,
-    "lng": -46.4156567
-  },
-  {
-    "bairro": "Jardim Guapituba",
-    "endereco": "Rua José Vidal Senin, 106",
-    "dias": ["Segunda", "Quarta"],
-    "lat": -23.6913883,
-    "lng": -46.4512422
-  },
-  {
-    "bairro": "Jardim Hélida",
-    "endereco": "Rua João Batista Scapinello, 74",
-    "dias": ["Terça", "Sábado"],
-    "lat": -23.6626197,
-    "lng": -46.4183274
-  },
-  {
-    "bairro": "Jardim Itapark Novo",
-    "endereco": "Rua Angelino de Genaro, 40",
-    "dias": ["Terça", "Sábado"],
-    "lat": -23.6789486,
-    "lng": -46.4292439
-  },
-  {
-    "bairro": "Jardim Itapark Velho",
-    "endereco": "Rua José Leardini, 134",
-    "dias": ["Quarta", "Sexta"],
-    "lat": -23.6840991,
-    "lng": -46.4374426
-  },
-  {
-    "bairro": "Jardim Luzitano",
-    "endereco": "Rua Godolfredo de Godoy, 40",
-    "dias": ["Segunda", "Sexta"],
-    "lat": -23.665088,
-    "lng": -46.4113273
-  },
-  {
-    "bairro": "Jardim Mauá",
-    "endereco": "Rua Joaquim Chavasco, 600",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6751218,
-    "lng": -46.4344557
-  },
-  {
-    "bairro": "Jardim Oratório",
-    "endereco": "Rua Gerber Wolfgang, 476",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.6576208,
-    "lng": -46.463776
-  },
-  {
-    "bairro": "Jardim Primavera",
-    "endereco": "Rua das Violetas, 471",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.7030074,
-    "lng": -46.4567168
-  },
-  {
-    "bairro": "Jardim Santista",
-    "endereco": "Rua José dos Santos, 171",
-    "dias": ["Terça", "Sábado"],
-    "lat": -23.6769403,
-    "lng": -46.4176027
-  },
-  {
-    "bairro": "Jardim Sônia Maria",
-    "endereco": "Rua da União, 29",
-    "dias": ["Quinta", "Sábado"],
-    "lat": -23.6273821,
-    "lng": -46.4828141
-  },
-  {
-    "bairro": "Jardim Zaíra - Gleba A",
-    "endereco": "Avenida Vitório Brizante, 333",
-    "dias": ["Quarta", "Sexta"],
-    "lat": -23.6603817,
-    "lng": -46.4435794
-  },
-  {
-    "bairro": "Jardim Zaíra - Gleba C",
-    "endereco": "Avenida Presidente Castelo Branco, 2796",
-    "dias": ["Quinta", "Sábado"],
-    "lat": -23.6510462,
-    "lng": -46.4408835
-  },
-  {
-    "bairro": "Jardim Zaíra - Gleba D",
-    "endereco": "Rua Jovita Marta Ramos, 107",
-    "dias": ["Terça", "Quinta"],
-    "lat": -23.645961,
-    "lng": -46.4288446
-  },
-  {
-    "bairro": "Parque São Vicente",
-    "endereco": "Rua Carlos Campos, 444",
-    "dias": ["Quinta", "Sábado"],
-    "lat": -23.6717536,
-    "lng": -46.4793733
-  },
-  {
-    "bairro": "Parque das Américas",
-    "endereco": "Rua São Domingos, 65",
-    "dias": ["Terça", "Sábado"],
-    "lat": -23.690931,
-    "lng": -46.4439257
-  },
-  {
-    "bairro": "Recanto Vital Brasil",
-    "endereco": "Rua Adolpho da Silva, 138",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6549987,
-    "lng": -46.4001954
-  },
-  {
-    "bairro": "Vila Assis Brasil",
-    "endereco": "Avenida Marcelo Marcolino, 355",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6806638,
-    "lng": -46.4656235
-  },
-  {
-    "bairro": "Vila Carlina",
-    "endereco": "Rua Doutor Miguel Vieira Ferreira, 68",
-    "dias": ["Segunda", "Sexta"],
-    "lat": -23.69991,
-    "lng": -46.4834311
-  },
-  {
-    "bairro": "Vila Magini",
-    "endereco": "Rua da Liberdade, 11",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.6583066,
-    "lng": -46.4539569
-  },
-  {
-    "bairro": "Vila Mercedes",
-    "endereco": "Rua Cícero Rodrigues da Silva, 66",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6986939,
-    "lng": -46.4491976
-  },
-  {
-    "bairro": "Vila Nova Mauá",
-    "endereco": "Rua Renato Dias Segur, 180",
-    "dias": ["Quarta", "Sábado"],
-    "lat": -23.6429308,
-    "lng": -46.4537029
-  },
-  {
-    "bairro": "Vila Vitória",
-    "endereco": "Avenida da Saudade, 945",
-    "dias": ["Terça", "Sexta"],
-    "lat": -23.6767918,
-    "lng": -46.4571919
-  }
+    // Dados Reais Geocodificados com Domingo adicionado a todas
+    const rawData = [
+  { "bairro": "Alto do Macuco", "endereco": "Avenida Adilson Dias de Souza, 890", "dias": ["Quarta", "Sábado"], "lat": -23.6477421, "lng": -46.4387084 },
+  { "bairro": "Capuava", "endereco": "Rua George Willian Hauck, 257", "dias": ["Terça", "Sexta"], "lat": -23.6524852, "lng": -46.491003 },
+  { "bairro": "Centro - Central", "endereco": "Rua Japão, 233", "dias": ["Terça", "Quinta", "Sábado"], "lat": -23.6679376, "lng": -46.4592467 },
+  { "bairro": "Chácara Maria Francisca", "endereco": "Estrada do Regalado, 592", "dias": ["Quarta", "Sábado"], "lat": -23.6536973, "lng": -46.4131514 },
+  { "bairro": "Estrada Sapopemba - Km 11", "endereco": "Estrada do Carneiro, 4453", "dias": ["Sexta"], "lat": -23.6536095, "lng": -46.4074683 },
+  { "bairro": "Jardim Alto da Boa Vista", "endereco": "Rua Henrique Martins, 22", "dias": ["Terça", "Sexta"], "lat": -23.6506449, "lng": -46.4475184 },
+  { "bairro": "Jardim Aracy", "endereco": "Rua Barão de Bocaina, 45", "dias": ["Terça", "Sábado"], "lat": -23.6804647, "lng": -46.4366546 },
+  { "bairro": "Jardim Bom Recanto", "endereco": "Rua São João, 502", "dias": ["Quarta", "Sábado"], "lat": -23.6756973, "lng": -46.4277139 },
+  { "bairro": "Jardim Brasília", "endereco": "Rua Compositor Valdir Azevedo, 16", "dias": ["Segunda", "Sexta"], "lat": -23.6830799, "lng": -46.4444911 },
+  { "bairro": "Jardim Colúmbia", "endereco": "Rua Leonaldo Calheiros de Melo, 269", "dias": ["Quinta", "Sábado"], "lat": -23.6521056, "lng": -46.423857 },
+  { "bairro": "Jardim Cruzeiro", "endereco": "Rua Mário Quintana, 44", "dias": ["Quarta", "Sábado"], "lat": -23.6565715, "lng": -46.4314868 },
+  { "bairro": "Jardim Esperança", "endereco": "Rua Luiz Benedetti, 68", "dias": ["Quarta", "Sábado"], "lat": -23.6830063, "lng": -46.4156567 },
+  { "bairro": "Jardim Guapituba", "endereco": "Rua José Vidal Senin, 106", "dias": ["Segunda", "Quarta"], "lat": -23.6913883, "lng": -46.4512422 },
+  { "bairro": "Jardim Hélida", "endereco": "Rua João Batista Scapinello, 74", "dias": ["Terça", "Sábado"], "lat": -23.6626197, "lng": -46.4183274 },
+  { "bairro": "Jardim Itapark Novo", "endereco": "Rua Angelino de Genaro, 40", "dias": ["Terça", "Sábado"], "lat": -23.6789486, "lng": -46.4292439 },
+  { "bairro": "Jardim Itapark Velho", "endereco": "Rua José Leardini, 134", "dias": ["Quarta", "Sexta"], "lat": -23.6840991, "lng": -46.4374426 },
+  { "bairro": "Jardim Luzitano", "endereco": "Rua Godolfredo de Godoy, 40", "dias": ["Segunda", "Sexta"], "lat": -23.665088, "lng": -46.4113273 },
+  { "bairro": "Jardim Mauá", "endereco": "Rua Joaquim Chavasco, 600", "dias": ["Quarta", "Sábado"], "lat": -23.6751218, "lng": -46.4344557 },
+  { "bairro": "Jardim Oratório", "endereco": "Rua Gerber Wolfgang, 476", "dias": ["Terça", "Sexta"], "lat": -23.6576208, "lng": -46.463776 },
+  { "bairro": "Jardim Primavera", "endereco": "Rua das Violetas, 471", "dias": ["Terça", "Sexta"], "lat": -23.7030074, "lng": -46.4567168 },
+  { "bairro": "Jardim Santista", "endereco": "Rua José dos Santos, 171", "dias": ["Terça", "Sábado"], "lat": -23.6769403, "lng": -46.4176027 },
+  { "bairro": "Jardim Sônia Maria", "endereco": "Rua da União, 29", "dias": ["Quinta", "Sábado"], "lat": -23.6273821, "lng": -46.4828141 },
+  { "bairro": "Jardim Zaíra - Gleba A", "endereco": "Avenida Vitório Brizante, 333", "dias": ["Quarta", "Sexta"], "lat": -23.6603817, "lng": -46.4435794 },
+  { "bairro": "Jardim Zaíra - Gleba C", "endereco": "Avenida Presidente Castelo Branco, 2796", "dias": ["Quinta", "Sábado"], "lat": -23.6510462, "lng": -46.4408835 },
+  { "bairro": "Jardim Zaíra - Gleba D", "endereco": "Rua Jovita Marta Ramos, 107", "dias": ["Terça", "Quinta"], "lat": -23.645961, "lng": -46.4288446 },
+  { "bairro": "Parque São Vicente", "endereco": "Rua Carlos Campos, 444", "dias": ["Quinta", "Sábado"], "lat": -23.6717536, "lng": -46.4793733 },
+  { "bairro": "Parque das Américas", "endereco": "Rua São Domingos, 65", "dias": ["Terça", "Sábado"], "lat": -23.690931, "lng": -46.4439257 },
+  { "bairro": "Recanto Vital Brasil", "endereco": "Rua Adolpho da Silva, 138", "dias": ["Quarta", "Sábado"], "lat": -23.6549987, "lng": -46.4001954 },
+  { "bairro": "Vila Assis Brasil", "endereco": "Avenida Marcelo Marcolino, 355", "dias": ["Quarta", "Sábado"], "lat": -23.6806638, "lng": -46.4656235 },
+  { "bairro": "Vila Carlina", "endereco": "Rua Doutor Miguel Vieira Ferreira, 68", "dias": ["Segunda", "Sexta"], "lat": -23.69991, "lng": -46.4834311 },
+  { "bairro": "Vila Magini", "endereco": "Rua da Liberdade, 11", "dias": ["Terça", "Sexta"], "lat": -23.6583066, "lng": -46.4539569 },
+  { "bairro": "Vila Mercedes", "endereco": "Rua Cícero Rodrigues da Silva, 66", "dias": ["Quarta", "Sábado"], "lat": -23.6986939, "lng": -46.4491976 },
+  { "bairro": "Vila Nova Mauá", "endereco": "Rua Renato Dias Segur, 180", "dias": ["Quarta", "Sábado"], "lat": -23.6429308, "lng": -46.4537029 },
+  { "bairro": "Vila Vitória", "endereco": "Avenida da Saudade, 945", "dias": ["Terça", "Sexta"], "lat": -23.6767918, "lng": -46.4571919 }
 ];
+
+    // Adicionar Domingo a todas as igrejas
+    const igrejasData = rawData.map(i => ({
+        ...i,
+        dias: [...i.dias, "Domingo"]
+    }));
 
     let map;
     let markerCluster;
     let selectedDays = [];
 
+    // Limites de Mauá (Bounding Box aproximada)
+    const mauaBounds = L.latLngBounds(
+        L.latLng(-23.7200, -46.5100), // Sudoeste
+        L.latLng(-23.6100, -46.3800)  // Nordeste
+    );
+
     function initMap() {
-        map = L.map('map').setView([-23.6687, -46.4614], 13);
+        map = L.map('map', {
+            maxBounds: mauaBounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 12
+        }).setView([-23.6687, -46.4614], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            attribution: '© OpenStreetMap contributors',
+            bounds: mauaBounds
         }).addTo(map);
 
         markerCluster = L.markerClusterGroup();
