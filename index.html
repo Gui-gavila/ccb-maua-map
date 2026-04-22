@@ -129,17 +129,33 @@
             bottom: 20px;
             right: 20px;
             background: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 1000;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
+            min-width: 140px;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
         }
 
         .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .legend-label {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -149,6 +165,15 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
+        }
+
+        .count-badge {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #475569;
         }
 
         /* Lista de Cards */
@@ -270,10 +295,23 @@
     <div id="map-container">
         <div id="map"></div>
         <div class="map-legend">
-            <div class="legend-item"><div class="dot" style="background: var(--norte)"></div> Norte</div>
-            <div class="legend-item"><div class="dot" style="background: var(--sul)"></div> Sul</div>
-            <div class="legend-item"><div class="dot" style="background: var(--leste)"></div> Leste</div>
-            <div class="legend-item"><div class="dot" style="background: var(--oeste)"></div> Oeste / Centro</div>
+            <div class="legend-title">Regiões (Qtd)</div>
+            <div class="legend-item">
+                <div class="legend-label"><div class="dot" style="background: var(--norte)"></div> Norte</div>
+                <span class="count-badge" id="count-norte">0</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-label"><div class="dot" style="background: var(--sul)"></div> Sul</div>
+                <span class="count-badge" id="count-sul">0</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-label"><div class="dot" style="background: var(--leste)"></div> Leste</div>
+                <span class="count-badge" id="count-leste">0</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-label"><div class="dot" style="background: var(--oeste)"></div> Oeste / Centro</div>
+                <span class="count-badge" id="count-oeste">0</span>
+            </div>
         </div>
     </div>
 
@@ -406,12 +444,31 @@
         renderContent();
     }
 
+    function updateLegendCounts(data) {
+        const counts = { "NORTE": 0, "SUL": 0, "LESTE": 0, "OESTE": 0 };
+        
+        data.forEach(igreja => {
+            const regiao = regioesMap[igreja.bairro] || "OESTE";
+            if (counts.hasOwnProperty(regiao)) {
+                counts[regiao]++;
+            }
+        });
+
+        document.getElementById('count-norte').innerText = counts["NORTE"];
+        document.getElementById('count-sul').innerText = counts["SUL"];
+        document.getElementById('count-leste').innerText = counts["LESTE"];
+        document.getElementById('count-oeste').innerText = counts["OESTE"];
+    }
+
     function renderContent() {
         markerCluster.clearLayers();
         const listContainer = document.getElementById('churchList');
         listContainer.innerHTML = '';
 
         const data = currentTab === 'atual' ? distAtual : distNova;
+        
+        // Atualizar contagem na legenda baseada no dataset da aba ativa
+        updateLegendCounts(data);
 
         const filtered = data.filter(igreja => {
             if (selectedDays.length === 0) return true;
@@ -424,10 +481,9 @@
         }
 
         filtered.forEach(igreja => {
-            const regiao = regioesMap[igreja.bairro] || "CENTRO";
+            const regiao = regioesMap[igreja.bairro] || "OESTE";
             const cor = coresRegiao[regiao];
 
-            // Marcador Colorido
             const markerHtml = `
                 <div style="background-color: ${cor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>
             `;
@@ -442,7 +498,6 @@
                 .bindPopup(`<b>${igreja.bairro}</b><br>${igreja.endereco}<br><small>Região: ${regiao}</small>`);
             markerCluster.addLayer(marker);
 
-            // Card
             const card = document.createElement('div');
             card.className = `church-card ${regiao.toLowerCase()}`;
             card.innerHTML = `
