@@ -343,7 +343,7 @@
         <button class="filter-btn" data-day="Domingo">Domingo</button>
     </div>
 
-    <div id="map-container" class="hidden-tab">
+    <div id="map-container">
         <div id="map"></div>
         <div class="map-legend">
             <div class="legend-title">Regiões (Filtrado)</div>
@@ -538,11 +538,11 @@
         const filterContainer = document.getElementById('filters-container');
         
         if (tab === 'ensaios') {
-            mapContainer.classList.add('hidden-tab');
-            filterContainer.classList.add('hidden-tab');
+            if (mapContainer) mapContainer.style.display = 'none';
+            if (filterContainer) filterContainer.style.display = 'none';
         } else {
-            mapContainer.classList.remove('hidden-tab');
-            filterContainer.classList.remove('hidden-tab');
+            if (mapContainer) mapContainer.style.display = 'block';
+            if (filterContainer) filterContainer.style.display = 'flex';
         }
         
         renderContent();
