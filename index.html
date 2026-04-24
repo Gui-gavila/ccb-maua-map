@@ -62,6 +62,7 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -253,6 +254,50 @@
             color: #ef4444;
         }
 
+        /* Ensaios Card */
+        .ensaio-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            border-left: 5px solid #8b5cf6;
+        }
+
+        .ensaio-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ensaio-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .ensaio-card .regiao-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: inline-block;
+            color: #8b5cf6;
+        }
+
+        .ensaio-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .ensaio-info strong {
+            color: var(--text);
+        }
+
         .empty-state {
             text-align: center;
             grid-column: 1 / -1;
@@ -260,6 +305,10 @@
             color: #64748b;
             background: white;
             border-radius: 12px;
+        }
+
+        .hidden-tab {
+            display: none;
         }
 
         @media (max-width: 600px) {
@@ -281,9 +330,10 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('atual')">Distribuição Atual</button>
         <button class="tab-btn" onclick="switchTab('nova')">Nova Distribuição</button>
+        <button class="tab-btn" onclick="switchTab('ensaios')">Ensaios Musicais</button>
     </div>
 
-    <div class="filters" id="dayFilters">
+    <div id="filters-container" class="filters" id="dayFilters">
         <button class="filter-btn" data-day="Segunda">Segunda</button>
         <button class="filter-btn" data-day="Terça">Terça</button>
         <button class="filter-btn" data-day="Quarta">Quarta</button>
@@ -293,7 +343,7 @@
         <button class="filter-btn" data-day="Domingo">Domingo</button>
     </div>
 
-    <div id="map-container">
+    <div id="map-container" class="hidden-tab">
         <div id="map"></div>
         <div class="map-legend">
             <div class="legend-title">Regiões (Filtrado)</div>
@@ -331,9 +381,10 @@
     const regioesMap = {
         "Jardim Zaíra - Gleba A": "NORTE", "Jardim Zaíra - Gleba B": "NORTE", "Jardim Zaíra - Gleba C": "NORTE", "Jardim Zaíra - Gleba D": "NORTE",
         "Jardim Mauá": "NORTE", "Jardim Oratório": "NORTE", "Jardim Sônia Maria": "NORTE", "Vila Magini": "NORTE", "Vila Nova Mauá": "NORTE",
-        "Jardim Guapituba": "SUL", "Jardim Miranda D’Aviz": "SUL", "Jardim Bom Recanto": "SUL", "Parque das Américas": "SUL", "Vila Assis Brasil": "SUL", "Recanto Vital Brasil": "SUL",
+        "Jardim Guapituba": "SUL", "Jardim Miranda D'Aviz": "SUL", "Jardim Bom Recanto": "SUL", "Parque das Américas": "SUL", "Vila Assis Brasil": "SUL", "Recanto Vital Brasil": "SUL",
         "Jardim Aracy": "LESTE", "Jardim Esperança": "LESTE", "Jardim Itapark Novo": "LESTE", "Jardim Itapark Velho": "LESTE", "Jardim Luzitano": "LESTE", "Jardim Santista": "LESTE", "Jardim Alto da Boa Vista": "LESTE",
-        "Central": "OESTE", "Centro - Central": "OESTE", "Capuava": "OESTE", "Jardim Primavera": "OESTE", "Parque São Vicente": "OESTE", "Vila Carlina": "OESTE", "Vila Mercedes": "OESTE", "Jardim Colúmbia": "OESTE", "Jardim Cruzeiro": "OESTE", "Vila Vitória": "OESTE"
+        "Central": "OESTE", "Centro - Central": "OESTE", "Capuava": "OESTE", "Jardim Primavera": "OESTE", "Parque São Vicente": "OESTE", "Vila Carlina": "OESTE", "Vila Mercedes": "OESTE", "Jardim Colúmbia": "OESTE", "Jardim Cruzeiro": "OESTE", "Vila Vitória": "OESTE",
+        "Alto do Macuco": "OESTE", "Chácara Maria Francisca": "LESTE", "Estrada Sapopemba - Km 11": "LESTE", "Jardim Brasília": "SUL", "Jardim Hélida": "LESTE"
     };
 
     const coresRegiao = {
@@ -384,7 +435,7 @@
 
     // Dados Nova Distribuição (Dataset 2)
     const distNova = [
-        { "bairro": "Central", "endereco": "Rua Japão, 233", "dias": ["Segunda", "Terça", "Quinta", "Sábado", "Domingo"], "lat": -23.6679376, "lng": -46.4592467 },
+        { "bairro": "Central", "endereco": "Rua Japão, 233", "dias": ["Terça", "Quinta", "Sábado", "Domingo"], "lat": -23.6679376, "lng": -46.4592467 },
         { "bairro": "Jardim Zaíra - Gleba A", "endereco": "Avenida Vitório Brizante, 333", "dias": ["Segunda", "Sexta", "Domingo"], "lat": -23.6603817, "lng": -46.4435794 },
         { "bairro": "Jardim Zaíra - Gleba B", "endereco": "Avenida Luís Gonzaga do Amaral, 808", "dias": ["Terça", "Sábado", "Domingo"], "lat": -23.6550, "lng": -46.4350 },
         { "bairro": "Jardim Zaíra - Gleba C", "endereco": "Avenida Presidente Castelo Branco, 2796", "dias": ["Quarta", "Sábado", "Domingo"], "lat": -23.6510462, "lng": -46.4408835 },
@@ -396,7 +447,7 @@
         { "bairro": "Jardim Oratório", "endereco": "Rua Gerber Wolfgang, 476", "dias": ["Quinta", "Sexta", "Domingo"], "lat": -23.6576208, "lng": -46.463776 },
         { "bairro": "Jardim Guapituba", "endereco": "Rua José Vidal Senin, 106", "dias": ["Segunda", "Sexta", "Domingo"], "lat": -23.6913883, "lng": -46.4512422 },
         { "bairro": "Parque das Américas", "endereco": "Rua São Domingos, 65", "dias": ["Segunda", "Quinta", "Domingo"], "lat": -23.690931, "lng": -46.4439257 },
-        { "bairro": "Jardim Miranda D’Aviz", "endereco": "Rua Adelmo Finelli, 24", "dias": ["Terça", "Sábado", "Domingo"], "lat": -23.6687, "lng": -46.4614 },
+        { "bairro": "Jardim Miranda D'Aviz", "endereco": "Rua Adelmo Finelli, 24", "dias": ["Terça", "Sábado", "Domingo"], "lat": -23.6687, "lng": -46.4614 },
         { "bairro": "Vila Assis Brasil", "endereco": "Avenida Marcelo Marcolino, 355", "dias": ["Terça", "Sábado", "Domingo"], "lat": -23.6806638, "lng": -46.4656235 },
         { "bairro": "Jardim Bom Recanto", "endereco": "Rua São João, 502", "dias": ["Quarta", "Sábado", "Domingo"], "lat": -23.6756973, "lng": -46.4277139 },
         { "bairro": "Recanto Vital Brasil", "endereco": "Rua Adolpho da Silva, 138", "dias": ["Quarta", "Sábado", "Domingo"], "lat": -23.6549987, "lng": -46.4001954 },
@@ -412,6 +463,46 @@
         { "bairro": "Parque São Vicente", "endereco": "Rua Carlos Campos, 444", "dias": ["Terça", "Quinta", "Domingo"], "lat": -23.6717536, "lng": -46.4793733 },
         { "bairro": "Vila Carlina", "endereco": "Rua Doutor Miguel Vieira Ferreira, 68", "dias": ["Segunda", "Sexta", "Domingo"], "lat": -23.69991, "lng": -46.4834311 },
         { "bairro": "Vila Mercedes", "endereco": "Rua Cícero Rodrigues da Silva, 66", "dias": ["Quarta", "Sábado", "Domingo"], "lat": -23.6986939, "lng": -46.4491976 }
+    ];
+
+    // Dados Ensaios Musicais
+    const ensaios = [
+        { "bairro": "Alto do Macuco", "ensaio": "3º Sábado", "horario": "17h00" },
+        { "bairro": "Capuava", "ensaio": "3º Sábado", "horario": "19h30" },
+        { "bairro": "Central - Mauá", "ensaio": "1º Domingo", "horario": "16h00" },
+        { "bairro": "Chácara Maria Francisca", "ensaio": "3ª Segunda feira", "horario": "19h30" },
+        { "bairro": "Estrada Sapopemba - Km 11", "ensaio": "1º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Alto da Boa Vista", "ensaio": "4º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Aracy", "ensaio": "3ª Sexta-feira", "horario": "19h30" },
+        { "bairro": "Jardim Bom Recanto", "ensaio": "4º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Brasília", "ensaio": "1º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Colúmbia", "ensaio": "4º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Cruzeiro", "ensaio": "2ª Sexta-feira", "horario": "19h30" },
+        { "bairro": "Jardim Esperança", "ensaio": "1º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Guapituba", "ensaio": "3º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Hélida", "ensaio": "1º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Itapark Novo", "ensaio": "Última Sexta-feira", "horario": "19h30" },
+        { "bairro": "Jardim Itapark Velho", "ensaio": "4º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Luzitano", "ensaio": "4º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Mauá", "ensaio": "1ª Sexta-feira", "horario": "19h30" },
+        { "bairro": "Jardim Miranda D'Aviz", "ensaio": "Último Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Oratório", "ensaio": "3º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Primavera", "ensaio": "3º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Santista", "ensaio": "Último Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Sônia Maria", "ensaio": "2º Domingo", "horario": "16h00" },
+        { "bairro": "Jardim Zaíra", "ensaio": "4ª Quinta feira", "horario": "19h30" },
+        { "bairro": "Jardim Zaíra - Gleba A", "ensaio": "1º Sábado", "horario": "19h30" },
+        { "bairro": "Jardim Zaíra - Gleba C", "ensaio": "1ª Segunda-feira", "horario": "19h30" },
+        { "bairro": "Jardim Zaíra - Gleba D", "ensaio": "Último Sábado", "horario": "19h30" },
+        { "bairro": "Parque das Américas", "ensaio": "4º Domingo", "horario": "16h00" },
+        { "bairro": "Parque São Vicente", "ensaio": "Última Sexta-feira", "horario": "19h30" },
+        { "bairro": "Recanto Vital Brasil", "ensaio": "4ª Segunda", "horario": "19h30" },
+        { "bairro": "Vila Assis Brasil", "ensaio": "3º Sábado", "horario": "17h00" },
+        { "bairro": "Vila Carlina", "ensaio": "4º Domingo", "horario": "16h00" },
+        { "bairro": "Vila Magini", "ensaio": "1º Sábado", "horario": "19h30" },
+        { "bairro": "Vila Mercedes", "ensaio": "2ª Quinta feira", "horario": "19h30" },
+        { "bairro": "Vila Nova Mauá", "ensaio": "3ª Sexta-feira", "horario": "19h30" },
+        { "bairro": "Vila Vitória", "ensaio": "3º Sábado", "horario": "19h30" }
     ];
 
     let currentTab = 'atual';
@@ -442,6 +533,18 @@
         currentTab = tab;
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
+        
+        const mapContainer = document.getElementById('map-container');
+        const filterContainer = document.getElementById('filters-container');
+        
+        if (tab === 'ensaios') {
+            mapContainer.classList.add('hidden-tab');
+            filterContainer.classList.add('hidden-tab');
+        } else {
+            mapContainer.classList.remove('hidden-tab');
+            filterContainer.classList.remove('hidden-tab');
+        }
+        
         renderContent();
     }
 
@@ -462,57 +565,79 @@
     }
 
     function renderContent() {
-        markerCluster.clearLayers();
         const listContainer = document.getElementById('churchList');
         listContainer.innerHTML = '';
 
-        const data = currentTab === 'atual' ? distAtual : distNova;
-        
-        const filtered = data.filter(igreja => {
-            if (selectedDays.length === 0) return true;
-            return selectedDays.some(day => igreja.dias.includes(day));
-        });
-
-        // Atualizar contagem na legenda baseada nos dados FILTRADOS
-        updateLegendCounts(filtered);
-
-        if (filtered.length === 0) {
-            listContainer.innerHTML = '<div class="empty-state">Nenhuma igreja encontrada para o filtro selecionado nesta distribuição.</div>';
-            return;
-        }
-
-        filtered.forEach(igreja => {
-            const regiao = regioesMap[igreja.bairro] || "OESTE";
-            const cor = coresRegiao[regiao];
-
-            const markerHtml = `
-                <div style="background-color: ${cor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>
-            `;
-            const customIcon = L.divIcon({
-                html: markerHtml,
-                className: 'custom-div-icon',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
+        if (currentTab === 'ensaios') {
+            // Renderizar Ensaios
+            ensaios.forEach(ensaio => {
+                const regiao = regioesMap[ensaio.bairro] || "OESTE";
+                
+                const card = document.createElement('div');
+                card.className = 'ensaio-card';
+                card.innerHTML = `
+                    <span class="regiao-tag">${regiao}</span>
+                    <h3>${ensaio.bairro}</h3>
+                    <div class="ensaio-info">
+                        <strong>Ensaio:</strong> ${ensaio.ensaio}
+                    </div>
+                    <div class="ensaio-info">
+                        <strong>Horário:</strong> ${ensaio.horario}
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        } else {
+            // Renderizar Distribuições
+            markerCluster.clearLayers();
+            
+            const data = currentTab === 'atual' ? distAtual : distNova;
+            
+            const filtered = data.filter(igreja => {
+                if (selectedDays.length === 0) return true;
+                return selectedDays.some(day => igreja.dias.includes(day));
             });
 
-            const marker = L.marker([igreja.lat, igreja.lng], { icon: customIcon })
-                .bindPopup(`<b>${igreja.bairro}</b><br>${igreja.endereco}<br><small>Região: ${regiao}</small>`);
-            markerCluster.addLayer(marker);
+            updateLegendCounts(filtered);
 
-            const card = document.createElement('div');
-            card.className = `church-card ${regiao.toLowerCase()}`;
-            card.innerHTML = `
-                <div>
-                    <span class="regiao-tag">${regiao}</span>
-                    <h3>${igreja.bairro}</h3>
-                    <p>${igreja.endereco}</p>
-                </div>
-                <div class="days">
-                    ${igreja.dias.map(d => `<span class="day-tag ${d.toLowerCase()}">${d}</span>`).join('')}
-                </div>
-            `;
-            listContainer.appendChild(card);
-        });
+            if (filtered.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state">Nenhuma igreja encontrada para o filtro selecionado nesta distribuição.</div>';
+                return;
+            }
+
+            filtered.forEach(igreja => {
+                const regiao = regioesMap[igreja.bairro] || "OESTE";
+                const cor = coresRegiao[regiao];
+
+                const markerHtml = `
+                    <div style="background-color: ${cor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>
+                `;
+                const customIcon = L.divIcon({
+                    html: markerHtml,
+                    className: 'custom-div-icon',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+
+                const marker = L.marker([igreja.lat, igreja.lng], { icon: customIcon })
+                    .bindPopup(`<b>${igreja.bairro}</b><br>${igreja.endereco}<br><small>Região: ${regiao}</small>`);
+                markerCluster.addLayer(marker);
+
+                const card = document.createElement('div');
+                card.className = `church-card ${regiao.toLowerCase()}`;
+                card.innerHTML = `
+                    <div>
+                        <span class="regiao-tag">${regiao}</span>
+                        <h3>${igreja.bairro}</h3>
+                        <p>${igreja.endereco}</p>
+                    </div>
+                    <div class="days">
+                        ${igreja.dias.map(d => `<span class="day-tag ${d.toLowerCase()}">${d}</span>`).join('')}
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
     }
 
     document.getElementById('dayFilters').addEventListener('click', (e) => {
