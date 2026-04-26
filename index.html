@@ -21,7 +21,6 @@
         .container { max-width: 1100px; margin: 0 auto; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 1.8rem; color: var(--primary); margin-bottom: 6px; }
-
         /* ── TABS ── */
         .tabs {
             display: flex;
@@ -49,10 +48,8 @@
         }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
         .tab-btn:hover:not(.active) { background: #f1f5f9; }
-
         .panel { display: none; animation: fadeIn 0.25s ease; }
         .panel.active { display: block; }
-
         /* ── FILTROS DIA ── */
         .filters {
             display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
@@ -64,7 +61,6 @@
             border-radius: 20px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
         }
         .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
         /* ── FILTROS REGIÃO ── */
         .region-filters {
             display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
@@ -92,7 +88,6 @@
         .region-filter-btn[data-region="Leste"].active { background:#ea580c; }
         .region-filter-btn[data-region="Oeste"]        { border-color:#7c3aed; color:#7c3aed; }
         .region-filter-btn[data-region="Oeste"].active { background:#7c3aed; }
-
         /* ── LEGENDA DINÂMICA ── */
         .legend-bar {
             display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
@@ -111,14 +106,12 @@
             padding: 0 7px; font-size: 0.75rem; font-weight: 700; min-width: 22px; height: 18px;
         }
         .legend-total { margin-left: auto; font-size: 0.8rem; color: #94a3b8; }
-
         /* ── MAPAS ── */
         .map-div {
             height: 500px; width: 100%; border-radius: 15px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 30px;
             z-index: 1; background: #e5e7eb;
         }
-
         /* ── CARDS CULTO ── */
         .church-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
         .church-card {
@@ -134,7 +127,6 @@
         .day-tag { font-size: 0.72rem; background: #eff6ff; color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
         .region-tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; color: white; white-space: nowrap; }
         .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; margin-bottom: 5px; }
-
         /* ── CARDS ENSAIO ── */
         .ensaio-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
         .ensaio-card {
@@ -152,7 +144,6 @@
         .ensaio-row .label { color: #64748b; font-size: 0.76rem; min-width: 60px; }
         .ensaio-row .value { font-weight: 600; color: var(--text); }
         .horario-pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
-
         /* ── BAIRROS SEM IGREJA ── */
         .bairros-info {
             background: var(--card-bg); border-radius: 12px; padding: 16px 20px;
@@ -171,11 +162,8 @@
         .bairro-card:hover { transform: translateY(-2px); }
         .bairro-icon { font-size: 1.3rem; }
         .bairro-nome { font-size: 0.88rem; font-weight: 600; color: var(--text); }
-
         .empty-state { text-align: center; grid-column: 1/-1; padding: 60px; color: #64748b; background: white; border-radius: 12px; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
         @media (max-width: 640px) {
             .map-div { height: 340px; }
             body { padding: 10px; }
@@ -186,19 +174,16 @@
 </head>
 <body>
 <div class="container">
-
     <header>
         <h1>⛪ Igrejas CCB — Mauá SP</h1>
         <p>Mapa interativo das congregações na cidade de Mauá</p>
     </header>
-
     <div class="tabs">
         <button class="tab-btn active"  onclick="switchTab('cultos', this)">🗺️ Distribuição Atual</button>
         <button class="tab-btn"         onclick="switchTab('nova', this)">🔄 Nova Distribuição</button>
         <button class="tab-btn"         onclick="switchTab('ensaios', this)">🎵 Ensaios</button>
         <button class="tab-btn"         onclick="switchTab('semigreja', this)">📍 Bairros sem Igreja</button>
     </div>
-
     <!-- ABA 1 — DISTRIBUIÇÃO ATUAL -->
     <div class="panel active" id="panel-cultos">
         <div class="filters" id="dayFilters">
@@ -229,7 +214,6 @@
         <div id="map" class="map-div"></div>
         <div class="church-list" id="churchList"></div>
     </div>
-
     <!-- ABA 2 — NOVA DISTRIBUIÇÃO -->
     <div class="panel" id="panel-nova">
         <div class="filters" id="dayFiltersNova">
@@ -260,7 +244,6 @@
         <div id="map-nova" class="map-div"></div>
         <div class="church-list" id="novaList"></div>
     </div>
-
     <!-- ABA 3 — ENSAIOS -->
     <div class="panel" id="panel-ensaios">
         <div class="region-filters" id="regionFiltersEnsaios">
@@ -282,7 +265,6 @@
         <div id="map-ensaio" class="map-div"></div>
         <div class="ensaio-list" id="ensaioList"></div>
     </div>
-
     <!-- ABA 4 — BAIRROS SEM IGREJA -->
     <div class="panel" id="panel-semigreja">
         <div class="bairros-info">
@@ -300,22 +282,15 @@
         <div id="map-semigreja" class="map-div"></div>
         <div class="bairros-grid" id="bairrosList"></div>
     </div>
-
 </div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script>
-
-// ─── NOVA DIVISÃO DE REGIÕES (baseada na definição geográfica correta) ───────
-// Norte: divisa com SP e Ferraz de Vasconcelos
-// Sul:   porção inferior, divisa com Ribeirão Pires
-// Leste: a leste do centro, em direção a Ribeirão Pires
-// Oeste: Centro da cidade + área industrial, divisa com Santo André
+// ─── NOVA DIVISÃO DE REGIÕES ──────────────────────────────────────────────────
 const BAIRROS_NORTE = new Set([
-    'Alto Da Boa Vista','Jardim Columbia','Jardim Colúmbia','Jardim Mauá','Jardim Oratório','Jardim Oratorio',
+    'Alto Da Boa Vista','Alto do Macuco','Jardim Columbia','Jardim Colúmbia','Jardim Mauá','Jardim Oratório','Jardim Oratorio',
     'Jardim Paranavaí','Jardim Santa Lídia','Jardim São Judas','Jardim Sílvia Maria',
-    'Jardim Sônia Maria','Jardim Zaira','Jardim Zaíra','Jardim Zaíra - Gleba A','Jardim Zaíra - Gleba B',
+    'Jardim Sônia Maria','Jardim Zaíra','Jardim Zaíra - Gleba A','Jardim Zaíra - Gleba B',
     'Jardim Zaíra - Gleba C','Jardim Zaíra - Gleba D','Parque Alvorada','Parque Bandeirantes',
     'Parque Boa Esperança','Vila Falchi','Vila Magini','Vila Nova Mauá','Vila Santa Cecília'
 ]);
@@ -333,15 +308,12 @@ const BAIRROS_LESTE = new Set([
     'Vila Augusto','Vila Feital','Vila Independência','Chácara Maria Francisca',
     'Estrada Sapopemba - Km 11'
 ]);
-// Oeste = Centro + Oeste (inclui todos os que não se encaixam nas demais)
-
 const CORES = {
     Norte:  { pin: '#2563eb', bg: '#dbeafe', text: '#1e40af' },
     Sul:    { pin: '#16a34a', bg: '#dcfce7', text: '#14532d' },
     Leste:  { pin: '#ea580c', bg: '#ffedd5', text: '#9a3412' },
     Oeste:  { pin: '#7c3aed', bg: '#ede9fe', text: '#4c1d95' }
 };
-
 function getRegiao(bairro) {
     if (BAIRROS_NORTE.has(bairro)) return 'Norte';
     if (BAIRROS_SUL.has(bairro))   return 'Sul';
@@ -391,7 +363,9 @@ const rawData = [
 const igrejasData = rawData.map(i=>({...i, dias:[...i.dias,"Domingo"], regiao:getRegiao(i.bairro)}));
 
 // ─── DADOS ABA 2 ─────────────────────────────────────────────────────────────
+// Igrejas originais da nova distribuição + as 8 que estavam faltando (marcadas abaixo)
 const novaRawCSV = [
+  // ── Igrejas originais da Aba 2 ──
   {bairro:"Centro - Central",          endereco:"Rua Japão, 233",                          dia:"Terça (Manhã)", lat:-23.6679376,lng:-46.4592467},
   {bairro:"Centro - Central",          endereco:"Rua Japão, 233",                          dia:"Quinta",        lat:-23.6679376,lng:-46.4592467},
   {bairro:"Centro - Central",          endereco:"Rua Japão, 233",                          dia:"Sábado",        lat:-23.6679376,lng:-46.4592467},
@@ -449,6 +423,23 @@ const novaRawCSV = [
   {bairro:"Vila Carlina",              endereco:"Rua Doutor Miguel Vieira Ferreira, 68",   dia:"Sexta",         lat:-23.69991,  lng:-46.4834311},
   {bairro:"Vila Mercedes",             endereco:"Rua Cícero Rodrigues da Silva, 66",       dia:"Quarta",        lat:-23.6986939,lng:-46.4491976},
   {bairro:"Vila Mercedes",             endereco:"Rua Cícero Rodrigues da Silva, 66",       dia:"Sábado",        lat:-23.6986939,lng:-46.4491976},
+
+  // ── ADICIONADAS: 8 igrejas que estavam nas Abas 1 e 3 mas faltavam na Aba 2 ──
+  {bairro:"Alto do Macuco",            endereco:"Avenida Adilson Dias de Souza, 890",      dia:"Quarta",        lat:-23.6477421,lng:-46.4387084},
+  {bairro:"Alto do Macuco",            endereco:"Avenida Adilson Dias de Souza, 890",      dia:"Sábado",        lat:-23.6477421,lng:-46.4387084},
+  {bairro:"Chácara Maria Francisca",   endereco:"Estrada do Regalado, 592",                dia:"Quarta",        lat:-23.6536973,lng:-46.4131514},
+  {bairro:"Chácara Maria Francisca",   endereco:"Estrada do Regalado, 592",                dia:"Sábado",        lat:-23.6536973,lng:-46.4131514},
+  {bairro:"Estrada Sapopemba - Km 11", endereco:"Estrada do Carneiro, 4453",               dia:"Sexta",         lat:-23.6536095,lng:-46.4074683},
+  {bairro:"Jardim Brasília",           endereco:"Rua Compositor Valdir Azevedo, 16",       dia:"Segunda",       lat:-23.6830799,lng:-46.4444911},
+  {bairro:"Jardim Brasília",           endereco:"Rua Compositor Valdir Azevedo, 16",       dia:"Sexta",         lat:-23.6830799,lng:-46.4444911},
+  {bairro:"Jardim Colúmbia",           endereco:"Rua Leonaldo Calheiros de Melo, 269",     dia:"Quinta",        lat:-23.6521056,lng:-46.423857 },
+  {bairro:"Jardim Colúmbia",           endereco:"Rua Leonaldo Calheiros de Melo, 269",     dia:"Sábado",        lat:-23.6521056,lng:-46.423857 },
+  {bairro:"Jardim Cruzeiro",           endereco:"Rua Mário Quintana, 44",                  dia:"Quarta",        lat:-23.6565715,lng:-46.4314868},
+  {bairro:"Jardim Cruzeiro",           endereco:"Rua Mário Quintana, 44",                  dia:"Sábado",        lat:-23.6565715,lng:-46.4314868},
+  {bairro:"Jardim Hélida",             endereco:"Rua João Batista Scapinello, 74",         dia:"Terça",         lat:-23.6626197,lng:-46.4183274},
+  {bairro:"Jardim Hélida",             endereco:"Rua João Batista Scapinello, 74",         dia:"Sábado",        lat:-23.6626197,lng:-46.4183274},
+  {bairro:"Vila Vitória",              endereco:"Avenida da Saudade, 945",                 dia:"Terça",         lat:-23.6767918,lng:-46.4571919},
+  {bairro:"Vila Vitória",              endereco:"Avenida da Saudade, 945",                 dia:"Sexta",         lat:-23.6767918,lng:-46.4571919},
 ];
 
 function agruparNova(data) {
@@ -547,14 +538,12 @@ const bairrosSemIgreja = [
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const mauaBounds = L.latLngBounds(L.latLng(-23.7200,-46.5100),L.latLng(-23.6100,-46.3800));
-
 function getTileLayer() {
     return L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         {attribution:'© OpenStreetMap contributors, © CARTO', subdomains:'abcd', maxZoom:19}
     );
 }
-
 function makeColorIcon(color) {
     return L.divIcon({
         className:'',
@@ -565,7 +554,6 @@ function makeColorIcon(color) {
         iconSize:[24,32], iconAnchor:[12,32], popupAnchor:[0,-32]
     });
 }
-
 function makeWarningIcon(color) {
     return L.divIcon({
         className:'',
@@ -576,7 +564,6 @@ function makeWarningIcon(color) {
         iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28]
     });
 }
-
 function updateLegend(prefix, filtered) {
     const counts = {Norte:0, Sul:0, Leste:0, Oeste:0};
     filtered.forEach(x=>{ if(counts[x.regiao]!==undefined) counts[x.regiao]++; });
@@ -592,7 +579,6 @@ function updateLegend(prefix, filtered) {
 let map, markerCluster;
 let selectedDaysC = [];
 let selectedRegiaoC = 'Todas';
-
 function initMap() {
     map = L.map('map',{maxBounds:mauaBounds, maxBoundsViscosity:1.0, minZoom:12}).setView([-23.6687,-46.4614],13);
     getTileLayer().addTo(map);
@@ -600,7 +586,6 @@ function initMap() {
     map.addLayer(markerCluster);
     renderCultos();
 }
-
 function renderCultos() {
     markerCluster.clearLayers();
     document.getElementById('churchList').innerHTML = '';
@@ -628,7 +613,6 @@ function renderCultos() {
         document.getElementById('churchList').appendChild(card);
     });
 }
-
 document.getElementById('dayFilters').addEventListener('click', e => {
     if(!e.target.classList.contains('filter-btn')) return;
     const day = e.target.getAttribute('data-day');
@@ -636,7 +620,6 @@ document.getElementById('dayFilters').addEventListener('click', e => {
     else { selectedDaysC.push(day); e.target.classList.add('active'); }
     renderCultos();
 });
-
 function filterRegiaoC(btn) {
     selectedRegiaoC = btn.getAttribute('data-region');
     document.querySelectorAll('#regionFiltersCultos .region-filter-btn').forEach(b=>b.classList.remove('active'));
@@ -648,7 +631,6 @@ function filterRegiaoC(btn) {
 let mapNova, clusterNova, mapNovaReady=false;
 let selectedDaysN = [];
 let selectedRegiaoN = 'Todas';
-
 function initMapNova() {
     if(mapNovaReady) return; mapNovaReady=true;
     mapNova = L.map('map-nova',{maxBounds:mauaBounds, maxBoundsViscosity:1.0, minZoom:12}).setView([-23.6687,-46.4614],13);
@@ -657,7 +639,6 @@ function initMapNova() {
     mapNova.addLayer(clusterNova);
     renderNova();
 }
-
 function renderNova() {
     clusterNova.clearLayers();
     document.getElementById('novaList').innerHTML = '';
@@ -685,7 +666,6 @@ function renderNova() {
         document.getElementById('novaList').appendChild(card);
     });
 }
-
 document.getElementById('dayFiltersNova').addEventListener('click', e => {
     if(!e.target.classList.contains('filter-btn')) return;
     const day = e.target.getAttribute('data-day');
@@ -693,7 +673,6 @@ document.getElementById('dayFiltersNova').addEventListener('click', e => {
     else { selectedDaysN.push(day); e.target.classList.add('active'); }
     renderNova();
 });
-
 function filterRegiaoN(btn) {
     selectedRegiaoN = btn.getAttribute('data-region');
     document.querySelectorAll('#regionFiltersNova .region-filter-btn').forEach(b=>b.classList.remove('active'));
@@ -703,7 +682,6 @@ function filterRegiaoN(btn) {
 
 // ─── ABA 3 — ENSAIOS ──────────────────────────────────────────────────────────
 let mapEnsaio, clusterEnsaio, mapEnsaioReady=false, selectedRegion='Todas';
-
 function initMapEnsaio() {
     if(mapEnsaioReady) return; mapEnsaioReady=true;
     mapEnsaio = L.map('map-ensaio',{maxBounds:mauaBounds, maxBoundsViscosity:1.0, minZoom:12}).setView([-23.6687,-46.4614],13);
@@ -712,7 +690,6 @@ function initMapEnsaio() {
     mapEnsaio.addLayer(clusterEnsaio);
     renderEnsaios();
 }
-
 function renderEnsaios() {
     clusterEnsaio.clearLayers();
     document.getElementById('ensaioList').innerHTML = '';
@@ -744,7 +721,6 @@ function renderEnsaios() {
         document.getElementById('ensaioList').appendChild(card);
     });
 }
-
 function filterRegion(btn) {
     selectedRegion = btn.getAttribute('data-region');
     document.querySelectorAll('#regionFiltersEnsaios .region-filter-btn').forEach(b=>b.classList.remove('active'));
@@ -756,14 +732,12 @@ function filterRegion(btn) {
 let mapSemIgreja, mapSemIgrejaReady=false;
 let selectedRegiaoSem = 'Todas';
 let markersSem = [];
-
 function initMapSemIgreja() {
     if(mapSemIgrejaReady) return; mapSemIgrejaReady=true;
     mapSemIgreja = L.map('map-semigreja',{maxBounds:mauaBounds, maxBoundsViscosity:1.0, minZoom:12}).setView([-23.6687,-46.4614],13);
     getTileLayer().addTo(mapSemIgreja);
     renderSemIgreja();
 }
-
 function renderSemIgreja() {
     markersSem.forEach(m=>m.remove());
     markersSem = [];
@@ -783,7 +757,6 @@ function renderSemIgreja() {
         lista.appendChild(card);
     });
 }
-
 function filterRegiaoSem(btn) {
     selectedRegiaoSem = btn.getAttribute('data-region');
     document.querySelectorAll('#regionFiltersSem .region-filter-btn').forEach(b=>b.classList.remove('active'));
@@ -798,12 +771,11 @@ function switchTab(tab, btn) {
     btn.classList.add('active');
     document.getElementById('panel-'+tab).classList.add('active');
     const resize=(m)=>setTimeout(()=>{if(m)m.invalidateSize();},200);
-    if(tab==='cultos')   resize(map);
-    if(tab==='nova')     { initMapNova();      resize(mapNova); }
-    if(tab==='ensaios')  { initMapEnsaio();    resize(mapEnsaio); }
-    if(tab==='semigreja'){ initMapSemIgreja(); resize(mapSemIgreja); }
+    if(tab==='cultos')    resize(map);
+    if(tab==='nova')      { initMapNova();      resize(mapNova); }
+    if(tab==='ensaios')   { initMapEnsaio();    resize(mapEnsaio); }
+    if(tab==='semigreja') { initMapSemIgreja(); resize(mapSemIgreja); }
 }
-
 window.onload = initMap;
 </script>
 </body>
